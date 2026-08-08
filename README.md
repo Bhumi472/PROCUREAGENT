@@ -151,13 +151,12 @@ procureagent-app/
 
 
 
-
 # System Design Document: ProcureOS
 ## The Autonomous Procurement Operating System (100% Zero-Cost Architecture)
 
 ---
 
-![Uploading image.png…]()
+![ProcureOS Architecture](C:/Users/User/.gemini/antigravity-ide/brain/57557546-c6a1-4485-accb-7281ee66d279/procureos_operating_system_architecture_1786098816494.png)
 
 ---
 
@@ -264,3 +263,4 @@ ProcureOS features a dedicated **BI Query Agent** (`bi_agent.py`) capable of par
 * **Executive KPIs**: Total Savings ($), Average Negotiation ROI %, Vendor Quality Rating, Active Pipeline Count.
 * **Interactive React Flow DAG**: Live color-coded visualization of the Supervisor Agent routing parallel worker nodes.
 * **Human Approval Gateway**: One-click review of draft POs, savings summaries, and risk indexes before ERP execution.
+
