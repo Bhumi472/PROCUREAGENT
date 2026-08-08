@@ -1,3 +1,6 @@
+
+
+
 # Implementation Plan: ProcureAgent (SourcingGraph AI)
 
 ProcureAgent is an autonomous multi-agent enterprise platform built on **LangGraph**, **MCP**, **Qdrant**, **FastAPI**, **React**, **PostgreSQL**, **Redis**, and **OpenTelemetry**. It automates B2B industrial procurement, technical BOM parsing, multi-turn vendor negotiation via email, compliance verification (RoHS/ITAR/ISO), and ERP purchase order execution with Human-in-the-Loop guardrails.
@@ -145,3 +148,119 @@ procureagent-app/
    * Watch multi-agent DAG execute through nodes via WebSockets.
    * Receive vendor quote webhook, trigger dynamic negotiation counter-offer, and verify graph enters **Human Approval Interrupt State**.
    * Approve Purchase Order in UI and verify PO generation in ERP MCP execution log.
+
+
+
+
+# System Design Document: ProcureOS
+## The Autonomous Procurement Operating System (100% Zero-Cost Architecture)
+
+---
+
+![ProcureOS Architecture](C:/Users/User/.gemini/antigravity-ide/brain/57557546-c6a1-4485-accb-7281ee66d279/procureos_operating_system_architecture_1786098816494.png)
+
+---
+
+## 1. Executive System Overview
+
+**ProcureOS** is an enterprise-grade **Autonomous Procurement Operating System**. Rather than acting as a simple AI script or linear chatbot, ProcureOS orchestrates the complete B2B sourcing lifecycle—from technical multi-modal BOM extraction, parallel supplier vector matching, and regulatory audit checks (RoHS/ITAR/ISO), to dynamic multi-turn email negotiation, automated self-learning, and ERP purchase order execution.
+
+ProcureOS runs on a **100% zero-cost stack** using **Groq API** (`llama-3.3-70b-versatile`), **Local Ollama**, **Local HuggingFace Embeddings**, **Qdrant Vector DB**, **PostgreSQL**, **Redis**, **Arize Phoenix**, **FastAPI**, and **React 18**.
+
+---
+
+## 2. Supervisor & Parallel Multi-Agent Architecture
+
+```
+                                    +-----------------------------------+
+                                    |     SUPERVISOR ORCHESTRATOR       |
+                                    |   (LangGraph Plan & Schedule)     |
+                                    +-----------------+-----------------+
+                                                      |
+                  +-----------------------------------+-----------------------------------+
+                  | (Parallel Execution Node 1)       | (Parallel Execution Node 2)       | (Parallel Execution Node 3)
+                  v                                   v                                   v
+    +---------------------------+       +---------------------------+       +---------------------------+
+    | Compliance Auditor Node   |       | Vendor Discovery Node     |       | Cost & Market Analyzer    |
+    | (ISO/RoHS/ITAR Check)     |       | (Qdrant Vector RAG)       |       | (Price Benchmark Engine)  |
+    +-------------+-------------+       +-------------+-------------+       +-------------+-------------+
+                  |                                   |                                   |
+                  +-----------------------------------+-----------------------------------+
+                                                      |
+                                                      v
+                                    +-----------------------------------+
+                                    | Negotiation Planner & Strategy    |
+                                    +-----------------+-----------------+
+                                                      |
+                                                      v
+                                    +-----------------------------------+
+                                    | Risk Assessment Agent Node        |
+                                    +-----------------+-----------------+
+                                                      |
+                                                      v
+                                    +-----------------------------------+
+                                    | HUMAN-IN-THE-LOOP INTERRUPT NODE  |
+                                    | (Pauses for Executive Approval)   |
+                                    +-----------------+-----------------+
+                                                      | (Approved)
+                                                      v
+                                    +-----------------------------------+
+                                    | ERP Integration & PO Node (MCP)   |
+                                    +-----------------+-----------------+
+                                                      |
+                                                      v
+                                    +-----------------------------------+
+                                    | LEARNING & SELF-IMPROVING AGENT   |
+                                    | (Updates Memory & Vendor Scores)  |
+                                    +-----------------------------------+
+```
+
+---
+
+## 3. Explicit 5-Layer Memory Architecture
+
+1. **Layer 1: Working Memory (LangGraph Thread State)**: Ephemeral thread context storing active conversation variables, line item specs, and node step counters.
+2. **Layer 2: Session Memory (Redis Checkpointer)**: In-memory state persistence enabling asynchronous graph pausing, retries, and Human-in-the-Loop graph resume.
+3. **Layer 3: Semantic Memory (Qdrant Vector Database)**: Persistent vector embeddings of supplier quotes, technical CAD metadata, and historical price negotiation trends.
+4. **Layer 4: Business Memory (PostgreSQL Relational DB)**: Immutable transaction database holding executed Purchase Orders, project audit trails, and supplier contracts.
+5. **Layer 5: Learning & Evaluation Memory (Postgres JSONB Store)**: Longitudinal store tracking evaluation scores (hallucination, tool precision), negotiation success rates, and vendor reliability metrics.
+
+---
+
+## 4. AI Evaluation Framework (Ragas / DeepEval Integration)
+
+After every procurement pipeline execution, the **AI Evaluation Engine** measures 8 critical quality metrics:
+
+* **Procurement Savings %**: `(Initial Quoted Amount - Final Negotiated PO Amount) / Initial Quoted Amount * 100`
+* **Negotiation Success Rate**: Boolean indicator of achieving target price within floor/ceiling budget guardrails.
+* **Tool Call Correctness**: Percentage of MCP tool executions returning `200 OK` status without retries.
+* **JSON Schema Validity**: Pydantic schema validation rate across document extraction nodes.
+* **Hallucination & Faithfulness Score**: Semantic similarity between extracted BOM specs and source documents.
+* **Cycle Time Reduction**: Percentage reduction in sourcing cycle time compared to manual baseline (21 days).
+* **Compliance Accuracy Rate**: Zero-tolerance audit score for RoHS/ITAR certification verification.
+* **Human Override Percentage**: Frequency of human manager modifying proposed PO terms before approval.
+
+---
+
+## 5. Business Intelligence (BI) Query Agent
+
+ProcureOS features a dedicated **BI Query Agent** (`bi_agent.py`) capable of parsing natural language executive questions into SQL/Vector queries:
+* *"Which suppliers became more expensive this quarter?"*
+* *"What is our average negotiation savings across aluminum parts?"*
+* *"Which vendors have the highest defect rate?"*
+
+---
+
+## 6. Model Context Protocol (MCP) Tools
+
+1. **`mcp-email-server`**: Multi-thread SMTP/IMAP email dispatch and quote reply listener.
+2. **`mcp-doc-parser`**: Multi-modal vision and document parser for PDFs, Excel BOMs, and CAD drawings.
+3. **`mcp-erp-sandbox`**: Transactional SAP BAPI / NetSuite Purchase Order execution mock.
+
+---
+
+## 7. Executive Dashboard & Visual Flow UI
+
+* **Executive KPIs**: Total Savings ($), Average Negotiation ROI %, Vendor Quality Rating, Active Pipeline Count.
+* **Interactive React Flow DAG**: Live color-coded visualization of the Supervisor Agent routing parallel worker nodes.
+* **Human Approval Gateway**: One-click review of draft POs, savings summaries, and risk indexes before ERP execution.
