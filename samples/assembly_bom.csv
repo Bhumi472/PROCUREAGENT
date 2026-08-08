@@ -1,0 +1,5 @@
+part_number,description,quantity,material_spec,target_price
+AL-6061-CNC-001,Custom CNC Machined Aluminum 6061-T6 Enclosure Bracket,500,Aluminum 6061-T6,12.00
+SS-316-HEX-M8,M8 Stainless Steel 316 High-Corrosion Hex Fastener Set,2000,Stainless Steel 316,0.85
+TI-GR5-HEAT-SINK,Titanium Grade 5 Precision Thermal Heat Sink Assembly,150,Titanium Grade 5,45.50
+FR4-PCB-4LAYER,4-Layer High-Frequency FR4 PCB Bare Board,1000,FR4 Standard,4.20
