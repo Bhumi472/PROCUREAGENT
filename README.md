@@ -157,7 +157,7 @@ procureagent-app/
 
 ---
 
-![ProcureOS Architecture](C:/Users/User/.gemini/antigravity-ide/brain/57557546-c6a1-4485-accb-7281ee66d279/procureos_operating_system_architecture_1786098816494.png)
+![Uploading image.png…]()
 
 ---
 
