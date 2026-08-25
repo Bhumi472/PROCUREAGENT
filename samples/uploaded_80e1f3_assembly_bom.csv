@@ -1,0 +1,6 @@
+part_id,item_name,category,quantity,unit_of_measure,material,specifications,target_unit_cost_usd,required_lead_time_days,preferred_vendor,compliance_requirements
+BOM-001,High-Torque Stepper Motor,Actuators,150,PCS,NEMA 23,"1.8 deg step angle, 2.8A, 1.26 Nm holding torque",45.0,14,Moons Industries,"RoHS, CE, ISO 9001"
+BOM-002,Precision CNC Machined Aluminum Frame,Structural,50,SETS,Aluminum 6061-T6,"Anodized finish, tolerance +/- 0.02mm, CAD-v4.2",120.0,21,Apex Precision Tooling,"ISO 9001, AS9100"
+BOM-003,Embedded Microcontroller PCB Assembly,Electronics,200,UNITS,FR-4,"STM32H743BIT6, Dual-band Wi-Fi/BLE module, SMD assembly",38.5,30,JLCPCB Assemblies,"RoHS, REACH, FCC Part 15"
+BOM-004,Industrial Grade Power Supply Unit,Power,75,PCS,Steel Enclosure,"24V DC, 15A, 360W output, DIN rail mountable",62.0,10,Mean Well Supply Co.,"UL 62368-1, CE"
+BOM-005,Optocoupler Signal Isolation Module,Sensory,300,PCS,Semiconductor,"4-channel PC817, 5kV optical isolation",3.2,7,Mouser Electronics,RoHS

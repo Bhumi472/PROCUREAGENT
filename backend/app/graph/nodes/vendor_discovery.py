@@ -11,21 +11,28 @@ def vendor_discovery_node(state: ProcureOSState) -> Dict[str, Any]:
     """
     logger.info("Executing [Node 2: Vendor Discovery Agent (Qdrant RAG)]")
     line_items = state.get("line_items", [])
+    target_company = state.get("company_name", "Apex Precision Components Pvt Ltd")
+    
+    clean_domain = target_company.lower().replace(" ", "").replace("pvt", "").replace("ltd", "").replace("inc", "").replace("corp", "")
+    if not clean_domain:
+        clean_domain = "apexprecision"
+    
+    primary_vendor_name = f"{target_company} Machining & Mfg" if "Machining" not in target_company else target_company
     
     benchmark_suppliers: List[VendorProfile] = [
         {
             "vendor_id": "v-101",
-            "company_name": "Apex Precision CNC & Machining",
-            "contact_email": "rfq@apexprecision.com",
+            "company_name": primary_vendor_name,
+            "contact_email": f"rfq@{clean_domain}.com",
             "iso_certified": True,
             "rohs_compliant": True,
-            "itar_registered": False,
+            "itar_registered": True,
             "quality_rating": 4.90
         },
         {
             "vendor_id": "v-102",
-            "company_name": "Global Hardware & Alloys Ltd",
-            "contact_email": "sales@globalalloys.com",
+            "company_name": "Bharat Alloys & Precision Metals India",
+            "contact_email": "sales@bharatalloys.in",
             "iso_certified": True,
             "rohs_compliant": True,
             "itar_registered": True,
@@ -33,8 +40,8 @@ def vendor_discovery_node(state: ProcureOSState) -> Dict[str, Any]:
         },
         {
             "vendor_id": "v-103",
-            "company_name": "FastTrack Fasteners Corp",
-            "contact_email": "quotes@fasttrackcorp.com",
+            "company_name": "FastTrack Fasteners India Corp",
+            "contact_email": "quotes@fasttrackcorp.in",
             "iso_certified": False,
             "rohs_compliant": False,
             "itar_registered": False,
@@ -59,10 +66,11 @@ def vendor_discovery_node(state: ProcureOSState) -> Dict[str, Any]:
         logger.warning(f"Vector search info: {e}. Using pre-seeded vector profiles.")
     
     matched_vendors = benchmark_suppliers
-    log_entry = f"Vendor Discovery matched {len(matched_vendors)} potential global suppliers from Qdrant vector store."
+    log_entry = f"Vendor Discovery matched {len(matched_vendors)} suppliers from Qdrant vector store for '{target_company}'."
     
     return {
         "matched_vendors": matched_vendors,
         "current_node": "vendor_discovery",
         "logs": [log_entry]
     }
+

@@ -1,5 +1,6 @@
+import os
 import uuid
-from fastapi import APIRouter, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, UploadFile, File
 from pydantic import BaseModel
 from typing import Dict, Any, List
 from backend.app.graph.workflow import build_procureos_graph
@@ -12,8 +13,41 @@ app_graph = build_procureos_graph()
 GRAPH_STATE_CACHE: Dict[str, Any] = {}
 
 class StartGraphRequest(BaseModel):
-    project_id: str
+    project_id: str = "PROJ-HARDWARE-2026"
     bom_file_path: str = "samples/assembly_bom.csv"
+    company_name: str = ""
+
+@router.get("/boms")
+async def list_available_boms():
+    """Returns list of available BOM sample files."""
+    samples_dir = "samples"
+    files = []
+    if os.path.exists(samples_dir):
+        for f in os.listdir(samples_dir):
+            if f.endswith(".csv"):
+                files.append(f"samples/{f}")
+    if not files:
+        files = ["samples/assembly_bom.csv"]
+    return {"boms": files}
+
+@router.post("/upload-bom")
+async def upload_bom_file(file: UploadFile = File(...)):
+    """Uploads a custom BOM CSV file for agent execution."""
+    samples_dir = "samples"
+    os.makedirs(samples_dir, exist_ok=True)
+    filename = f"uploaded_{uuid.uuid4().hex[:6]}_{file.filename}"
+    file_path = os.path.join(samples_dir, filename)
+    
+    contents = await file.read()
+    with open(file_path, "wb") as f:
+        f.write(contents)
+        
+    return {
+        "status": "SUCCESS",
+        "file_path": file_path,
+        "filename": filename,
+        "message": f"Successfully uploaded BOM '{file.filename}' to {file_path}"
+    }
 
 @router.post("/start-execution")
 async def start_agent_execution(req: StartGraphRequest, background_tasks: BackgroundTasks):
@@ -23,6 +57,7 @@ async def start_agent_execution(req: StartGraphRequest, background_tasks: Backgr
     initial_state = {
         "project_id": req.project_id,
         "thread_id": thread_id,
+        "company_name": req.company_name or "",
         "bom_file_path": req.bom_file_path,
         "line_items": [],
         "matched_vendors": [],
@@ -39,6 +74,8 @@ async def start_agent_execution(req: StartGraphRequest, background_tasks: Backgr
         "logs": ["ProcureOS Orchestrator Initialized."]
     }
 
+
+
     # Execute graph synchronously for reliable state reporting
     config = {"configurable": {"thread_id": thread_id}}
     final_state = app_graph.invoke(initial_state, config=config)
@@ -48,6 +85,7 @@ async def start_agent_execution(req: StartGraphRequest, background_tasks: Backgr
     return {
         "status": "AWAITING_HUMAN_APPROVAL",
         "thread_id": thread_id,
+        "state": final_state,
         "current_node": final_state.get("current_node"),
         "proposed_po": final_state.get("proposed_po"),
         "risk_score": final_state.get("risk_score"),
@@ -56,7 +94,7 @@ async def start_agent_execution(req: StartGraphRequest, background_tasks: Backgr
 
 @router.get("/state/{thread_id}")
 async def get_agent_state(thread_id: str):
-    """Fetches real-time state of running agent graph for frontend React Flow visualizer."""
+    """Fetches real-time state of running agent graph for frontend visualizer."""
     state = GRAPH_STATE_CACHE.get(thread_id)
     if not state:
         return {"status": "NOT_FOUND", "logs": ["Graph state initializing..."]}
@@ -77,6 +115,8 @@ async def approve_purchase_order(thread_id: str):
     return {
         "status": "COMPLETED",
         "message": "Purchase Order approved and executed in SAP ERP Sandbox. Learning Agent updated.",
+        "state": resumed_state,
         "evaluation_metrics": resumed_state.get("evaluation_metrics"),
         "logs": resumed_state.get("logs")
     }
+

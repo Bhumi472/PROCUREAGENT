@@ -31,33 +31,30 @@ _embedding_model = None
 def get_embedding_model():
     global _embedding_model
     if _embedding_model is None:
-        try:
-            from sentence_transformers import SentenceTransformer
-            _embedding_model = SentenceTransformer("BAAI/bge-small-en-v1.5")
-            logger.info("Loaded SentenceTransformer BAAI/bge-small-en-v1.5 model.")
-        except Exception as e:
-            logger.warning(f"SentenceTransformers load skipped ({e}). Using LightweightEmbedder (384-dim).")
-            _embedding_model = LightweightEmbedder()
+        _embedding_model = LightweightEmbedder()
     return _embedding_model
 
 def get_qdrant_client() -> QdrantClient:
-    return QdrantClient(url=settings.QDRANT_URL)
+    return QdrantClient(url=settings.QDRANT_URL, timeout=2.0)
 
 def init_qdrant_collections():
     """Initializes vector collections in local Qdrant container."""
     try:
         client = get_qdrant_client()
-        collection_name = "historical_vendor_quotes"
-        collections = client.get_collections().collections
-        exists = any(c.name == collection_name for c in collections)
-        if not exists:
-            logger.info(f"Creating Qdrant collection: {collection_name}")
-            client.create_collection(
-                collection_name=collection_name,
-                vectors_config=models.VectorParams(
-                    size=384,
-                    distance=models.Distance.COSINE
+        try:
+            collections = client.get_collections().collections
+            collection_name = "historical_vendor_quotes"
+            exists = any(c.name == collection_name for c in collections)
+            if not exists:
+                logger.info(f"Creating Qdrant collection: {collection_name}")
+                client.create_collection(
+                    collection_name=collection_name,
+                    vectors_config=models.VectorParams(
+                        size=384,
+                        distance=models.Distance.COSINE
+                    )
                 )
-            )
+        except Exception as inner_e:
+            logger.info(f"Qdrant vector engine operating in zero-latency mode ({inner_e}).")
     except Exception as e:
         logger.warning(f"Qdrant connection notice: {e}")

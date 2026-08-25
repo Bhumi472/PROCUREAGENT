@@ -18,11 +18,19 @@ This script demonstrates the complete procurement lifecycle:
 
 import sys
 import logging
+
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+
 from backend.app.graph.workflow import build_procureos_graph
 from backend.app.services.bi_agent import bi_agent
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(name)s | %(levelname)s | %(message)s")
 logger = logging.getLogger("ProcureOS-Demo")
+
 
 def print_banner(text):
     print("\n" + "="*80)
@@ -39,6 +47,7 @@ def run_procureos_mvp():
     initial_state = {
         "project_id": "PROJ-HARDWARE-2026",
         "thread_id": thread_id,
+        "company_name": "",
         "bom_file_path": "samples/assembly_bom.csv",
         "line_items": [],
         "matched_vendors": [],
@@ -75,11 +84,12 @@ def run_procureos_mvp():
     print(f"  Proposed Purchase Order Package:")
     print(f"  • PO Number       : {proposed_po.get('po_number', 'PO-DRAFT-8942')}")
     print(f"  • Supplier        : {proposed_po.get('vendor_name')}")
-    print(f"  • Negotiated Price: ${proposed_po.get('unit_price'):.2f}/unit (Total: ${proposed_po.get('total_amount'):,.2f})")
+    print(f"  • Negotiated Price: ₹{proposed_po.get('unit_price'):.2f}/unit (Total: ₹{proposed_po.get('total_amount'):,.2f})")
     print(f"  • Savings Realized: {proposed_po.get('savings_realized')}")
     print(f"  • Supplier Risk   : {risk_score:.2f} (LOW RISK)")
     print(f"  • Status          : AWAITING HUMAN EXECUTIVE APPROVAL (Graph Interrupted)")
     print("-" * 60)
+
 
     # 2. Simulate Executive Human Approval
     user_input = "APPROVE"

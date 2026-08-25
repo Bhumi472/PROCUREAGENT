@@ -20,13 +20,15 @@ def erp_executor_node_wrapper(state: ProcureOSState):
     proposed_po = state.get("proposed_po", {})
     from backend.app.mcp_servers.erp_mcp import erp_mcp_server
     
+    vendor_name = proposed_po.get("vendor_name") or state.get("company_name", "Apex Precision Components Pvt Ltd")
     result = erp_mcp_server.create_purchase_order(
-        vendor_name=proposed_po.get("vendor_name", "Apex Precision"),
+        vendor_name=vendor_name,
         line_items=state.get("line_items", []),
-        total_amount=proposed_po.get("total_amount", 5900.0)
+        total_amount=proposed_po.get("total_amount", 43070.0)
     )
     
-    log_entry = f"ERP Integration Agent executed Purchase Order write-back to SAP Sandbox! PO Number: {result['po_number']}"
+    log_entry = f"ERP Integration Agent executed Purchase Order write-back to SAP Sandbox for '{vendor_name}'! PO Number: {result['po_number']}"
+
     logger.info(log_entry)
     
     # Run AI evaluation

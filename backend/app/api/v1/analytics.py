@@ -11,6 +11,7 @@ class BIQueryRequest(BaseModel):
 async def get_executive_kpis():
     """Returns Executive C-Suite Dashboard KPIs."""
     return {
+        "total_savings_inr": 11756250.00,
         "total_savings_usd": 142500.00,
         "total_savings_pct": 18.6,
         "roi_multiple": "14.2x",
@@ -21,6 +22,7 @@ async def get_executive_kpis():
         "supplier_risk_index": "0.14 (LOW RISK)",
         "avg_negotiation_success_rate": "94.2%"
     }
+
 
 @router.post("/bi-query")
 async def query_bi_agent(request: BIQueryRequest):

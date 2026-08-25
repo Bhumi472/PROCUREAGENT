@@ -28,6 +28,7 @@ class VendorQuote(TypedDict):
 class ProcureOSState(TypedDict):
     project_id: str
     thread_id: str
+    company_name: str
     bom_file_path: str
     line_items: List[LineItem]
     matched_vendors: List[VendorProfile]
@@ -42,3 +43,4 @@ class ProcureOSState(TypedDict):
     proposed_po: Optional[Dict[str, Any]]
     evaluation_metrics: Dict[str, Any]
     logs: Annotated[List[str], operator.add]
+
