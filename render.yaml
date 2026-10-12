@@ -1,0 +1,38 @@
+
+services:
+  - type: web
+    name: procureos-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.11
+
+      - key: SECRET_KEY
+        generateValue: true
+
+      - key: FRONTEND_URL
+        value: http://localhost:5173
+
+      - key: ENABLE_TELEMETRY
+        value: "false"
+
+      - key: GROQ_API_KEY
+        sync: false
+
+      - key: GEMINI_API_KEY
+        sync: false
+
+      - key: DATABASE_URL
+        sync: false
+
+      - key: QDRANT_URL
+        sync: false
+
+      - key: QDRANT_API_KEY
+        sync: false
+
+      - key: REDIS_URL
+        sync: false
